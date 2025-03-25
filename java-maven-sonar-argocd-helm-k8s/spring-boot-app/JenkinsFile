@@ -25,7 +25,7 @@ stage('Sonarqube code scanning'){
 steps {
        scripts{
          withSonarQubeEnv('SonarQube') {  // This assumes you have SonarQube configured in Jenkins global settings
-                      sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app 
+                      sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app '
                         sh """
                         mvn sonar:sonar \
                             -Dsonar.projectKey=${JOB_NAME} \
