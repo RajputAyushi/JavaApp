@@ -4,8 +4,10 @@ pipeline {
     stages {
         stage('checkout') {
             steps {
-                git branch: 'main', url:java-maven-sonar-argocd-helm-k8s/spring-boot-app/src/main/java/com/abhishek
+                echo "passeed"
             }
         }
     }
+
+
 }
