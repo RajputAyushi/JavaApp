@@ -3,7 +3,7 @@ pipeline {
 environment {
         // Use Jenkins Credentials to securely access the SonarQube token
         SONAR_TOKEN = credentials('sonartoken')  // Replace 'sonar-token' with the ID of the secret you stored in Jenkins
-
+}
 tools {
 maven 'mymvn'
 }
@@ -12,7 +12,8 @@ maven 'mymvn'
         stage('checkout') {
             steps {
                 echo "passeed"
-            }}
+            }
+}
 stage('Build'){
 steps { 
   echo "build started"
