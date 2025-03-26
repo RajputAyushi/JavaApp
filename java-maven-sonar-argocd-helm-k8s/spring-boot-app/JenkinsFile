@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    environment {
-        // Use Jenkins Credentials to securely access the SonarQube token
-        SONAR_TOKEN = credentials('squ_678a1b420e7a0b07f9327741e1ec87425c60ae80')  // Replace 'sonar-token' with the ID of the secret you stored in Jenkins
-    }
     tools {
         maven 'mymvn'
     }
@@ -23,22 +19,15 @@ pipeline {
             }
         }
         
-        stage('SonarQube code scanning') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube') {  // This assumes you have SonarQube configured in Jenkins global settings
-                        dir('java-maven-sonar-argocd-helm-k8s/spring-boot-app') {
-                            sh """
-                                mvn sonar:sonar \
-                                    -Dsonar.projectKey=${JOB_NAME} \
-                                    -Dsonar.projectName=${JOB_NAME} \
-                                    -Dsonar.login=${SONAR_TOKEN} \
-                                    -Dsonar.host.url=http://10.0.2.15:9000
-                            """
-                        }
-                    }
-                }
-            }
+        stage('Static Code Analysis') {
+      environment {
+        SONAR_URL = "http://10.0.2.15:9000"
+      }
+      steps {
+        withCredentials([string(credentialsId: 'sonartoken', variable: 'SONAR_AUTH_TOKEN')]) {
+          sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
         }
+      }
     }
-}
+}                
+ 
