@@ -35,7 +35,7 @@ stage('Build and Push Docker Image') {
         DOCKER_IMAGE = "ayushiraj/dockerrepo:${BUILD_NUMBER}"
         // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
         REGISTRY_CREDENTIALS = credentials('Dockertokenforjenkins')
-      }}
+      }
       steps {
         script {
             sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
@@ -45,4 +45,5 @@ stage('Build and Push Docker Image') {
         }
 }                
  }
+}
 }
