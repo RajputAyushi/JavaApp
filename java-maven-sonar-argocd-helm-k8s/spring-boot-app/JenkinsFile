@@ -10,14 +10,16 @@ pipeline {
                 echo "Checkout successful"
             }
         }
-        
-        stage('Build') {
-            steps { 
-                echo "Build started"
-                sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
-                echo "Build successful"
-            }
+stage('Build') {
+    steps { 
+        echo "Build started"
+        withMaven(maven: 'mymvn', publisherStrategy: 'EXPLICIT') {
+            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
         }
+        echo "Build successful"
+    }
+}
+
 stage('Build and Push Docker Image') {
     environment {
         DOCKER_IMAGE = "ayushiraj/dockerrepo:${BUILD_NUMBER}"
