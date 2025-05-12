@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'mymvn'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -15,9 +11,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Build started"
-                withMaven(maven: 'mymvn', publisherStrategy: 'EXPLICIT') {
-                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
-                }
+                sh '''
+                    cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+                    mvn clean package
+                '''
                 echo "Build successful"
             }
         }
@@ -25,7 +22,6 @@ pipeline {
         stage('Build and Push Docker Image') {
             environment {
                 DOCKER_IMAGE = "ayushiraj/dockerrepo:${BUILD_NUMBER}"
-                REGISTRY_CREDENTIALS = credentials('Jenkins-token')  // Optional if not used
             }
             steps {
                 script {
