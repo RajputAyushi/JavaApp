@@ -21,7 +21,7 @@ pipeline {
 stage('Build and Push Docker Image') {
     environment {
         DOCKER_IMAGE = "ayushiraj/dockerrepo:${BUILD_NUMBER}"
-        REGISTRY_CREDENTIALS = credentials('TokenforDocker')  // This must match the ID of your Docker Hub credentials
+        REGISTRY_CREDENTIALS = credentials('Jenkins-token')  // This must match the ID of your Docker Hub credentials
     }
     steps {
         script {
