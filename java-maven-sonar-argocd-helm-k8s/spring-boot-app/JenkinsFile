@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     tools {
         maven 'mymvn'
     }
@@ -10,33 +11,36 @@ pipeline {
                 echo "Checkout successful"
             }
         }
-stage('Build') {
-    steps { 
-        echo "Build started"
-        withMaven(maven: 'mymvn', publisherStrategy: 'EXPLICIT') {
-            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+
+        stage('Build') {
+            steps {
+                echo "Build started"
+                withMaven(maven: 'mymvn', publisherStrategy: 'EXPLICIT') {
+                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+                }
+                echo "Build successful"
+            }
         }
-        echo "Build successful"
-    }
-}
 
-stage('Build and Push Docker Image') {
-    environment {
-        DOCKER_IMAGE = "ayushiraj/dockerrepo:${BUILD_NUMBER}"
-        REGISTRY_CREDENTIALS = credentials('Jenkins-token')  // This must match the ID of your Docker Hub credentials
-    }
-    steps {
-        script {
-            // Build the Docker image
-            sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
+        stage('Build and Push Docker Image') {
+            environment {
+                DOCKER_IMAGE = "ayushiraj/dockerrepo:${BUILD_NUMBER}"
+                REGISTRY_CREDENTIALS = credentials('Jenkins-token')  // Optional if not used
+            }
+            steps {
+                script {
+                    sh "cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} ."
+                    docker.withRegistry('https://index.docker.io/v1/', 'TokenforDocker') {
+                        sh "docker push ${DOCKER_IMAGE}"
+                    }
+                }
+            }
+        }
 
-            // Authenticate and push to Docker registry
-            docker.withRegistry('https://index.docker.io/v1/', 'TokenforDocker') {
-                sh "docker push ${DOCKER_IMAGE}"
+        stage('Update Deployment File') {
+            steps {
+                echo 'Deployment update logic here...'
             }
         }
     }
-}
-
-}            
 }
