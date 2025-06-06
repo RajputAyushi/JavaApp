@@ -21,7 +21,7 @@ pipeline {
 
         stage('Build and Push Docker Image') {
             environment {
-                DOCKER_IMAGE = "ayushiraj/dockerrepo:${BUILD_NUMBER}"
+                DOCKER_IMAGE = "ayushiraj/javadockerimage:${BUILD_NUMBER}"
             }
             steps {
                 script {
